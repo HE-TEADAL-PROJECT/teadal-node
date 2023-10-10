@@ -1,29 +1,30 @@
 dags:
   persistence:
-    storageClassName: directpv-min-io
+    storageClassName: local-storage # directpv-min-io if using directpv
     size: 1Gi
 
 logs:
   persistence:
-    storageClassName: directpv-min-io
+    storageClassName: local-storage # directpv-min-io if using directpv
     size: 1Gi
 
 workers:
   persistence:
-    storageClassName: directpv-min-io
+    storageClassName: local-storage # directpv-min-io if using directpv
     size: 1Gi
 
 triggerer:
   persistence:
-    storageClassName: directpv-min-io
+    storageClassName: local-storage # directpv-min-io if using directpv
     size: 1Gi
 
 redis:
   persistence:
-    storageClassName: directpv-min-io
+    storageClassName: local-storage # directpv-min-io if using directpv
     size: 1Gi
 
 postgresql:
   primary:
     persistence:
-      storageClass: directpv-min-io
+      storageClass: local-storage # directpv-min-io if using directpv
+
