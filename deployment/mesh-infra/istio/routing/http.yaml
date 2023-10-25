@@ -52,6 +52,16 @@ spec:
         host: minio.minio-operator.svc.cluster.local
         port:
           number: 80
+  - match:
+    - uri:
+        prefix: /airflow/
+    - uri:
+        prefix: /airflow
+    route:
+      - destination:
+          host: airflow-webserver.airflow.svc.cluster.local
+          port:
+            number: 8080
 
 # NOTE
 # 1. URL rewriting. We use overlapping prefixes to make sure `/x`, `/x/`

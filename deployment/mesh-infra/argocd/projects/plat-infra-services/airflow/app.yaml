@@ -1,0 +1,58 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow
+  namespace: argocd
+spec:
+  project: plat-infra-services
+  sources:
+    - chart: airflow
+      repoURL: https://airflow.apache.org
+      targetRevision: 1.10.0
+      helm:
+        releaseName: airflow
+        parameters: # necessary when installing chart with argocd, as explained in https://airflow.apache.org/docs/helm-chart/stable/index.html
+          - name: createUserJob.useHelmHooks
+            value: "false"
+          - name: createUserJob.applyCustomEnv
+            value: "false"
+          - name: migrateDatabaseJob.useHelmHooks
+            value: "false"
+          - name: migrateDatabaseJob.applyCustomEnv
+            value: "false"
+          - name: config.webserver.base_url
+            value: "http://localhost:8080/airflow"
+        valueFiles: 
+        - $baselineroot/deployment/plat-infra-services/airflow/official/helm-values.yaml # fetches our own values-file from cloud-baseline repo (1)
+    - repoURL: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node.git # (2)
+      targetRevision: airflow-local-storage
+      ref: baselineroot
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: airflow
+
+  syncPolicy:
+    # Automated sync with retries. Max of 5 failed attempts spaced out
+    # by 5s, 10s, 20s, 40s, and 80s. See retry stanza below.
+    automated:
+      # Don't try fixing apps when resources changed only in the cluster
+      # but not in git.
+      selfHeal: false
+    syncOptions:
+    # Make sure the app destination namespace exists in the cluster.
+    - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 20m     # base amount to back off
+        factor: 2        # factor to multiply base after each failed retry
+        maxDuration: 1h  # maximum time allowed for the backoff strategy
+
+# Note 1: this uses argocd multiple sources features, which unfortunately
+# is still in beta, and is not stable. Since this is the easiest way 
+# to use custom value files on helm charts, we may stick with it (https://argo-cd.readthedocs.io/en/stable/user-guide/multiple_sources/#helm-value-files-from-external-git-repository)
+# However, we have to be careful *if* updating argocd in the future.
+# Note 2: You may update the URL and the targetRevision to wherever 
+# you store your own values file! ArgoCD being a GitOps platform you must
+# have them committed somewhere. 
