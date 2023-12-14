@@ -191,3 +191,50 @@ Notice that you can actually be selective about which services get
 an Envoy sidecar, but for now we'll just apply a blanket policy to
 keep things simple.
 
+#### Argo CD
+
+Argo CD is our declarative continuous delivery engine. Except for
+the things listed in this bootstrap procedure, we declare the cluster
+state with YAML files that we keep in the `deployment` dir within
+our GitHub repo. Argo CD takes care of reconciling the current cluster
+state with what we declared in the repo.
+
+For that to happen, we've got to deploy Argo CD and tell it to use
+the YAML in our repo to populate the cluster. Our repo also contains
+the instructions for Argo CD to manage its own deployment state as
+well as the rest of the Teadal platform—I know, it sounds like a dog
+chasing its own tail, but it works. So we can just build the YAML to
+deploy Argo CD and connect it to our repo like this
+
+```bash
+kustomize build mesh-infra/argocd | kubectl apply -f -
+```
+
+After deploying itself to the cluster, Argo CD will populate it with
+all the K8s resources we declared in our repo and so slowly the Teadal
+platform instance will come into its own. This will take some time.
+Go for coffee.
+
+> Note
+>* Argo CD project errors. If you see a message like the one below in
+  the output, rerun the above command again — see [#42][boot.argo-app-issue]
+  about it.
+>> unable to recognize "STDIN": no matches for kind "AppProject" in version "argoproj.io/v1alpha1"
+
+>Notice that Argo CD creates an initial secret with an admin user of
+`admin` and randomly generated password on the first deployment. To
+grab that password, run
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret \
+        -o jsonpath="{.data.password}" | base64 -d && echo
+```
+
+You can use it if you get in trouble during the bootstrap procedure,
+but keeping it around is like an accident waiting to happen. So you
+should definitely zap it as soon as you've managed to log into Argo
+CD with the password you entered in our secret. To do that, just
+
+```bash
+kubectl -n argocd delete secret argocd-initial-admin-secret
+```
