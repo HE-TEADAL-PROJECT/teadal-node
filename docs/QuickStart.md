@@ -59,3 +59,48 @@ Wait until all the above extras show in the "enabled" list
 ```
 microk8s status
 ```
+
+Now we've got to broaden MicroK8s node port range. This is to make sure it'll be able to expose any K8s node port we're going to use.
+```
+nano /var/snap/microk8s/current/args/kube-apiserver
+```
+
+and add this line somewhere in the file
+```
+--service-node-port-range=1-65535
+```
+
+Then restart microk8s
+```
+microk8s stop
+microk8s start
+```
+
+
+> Notes
+> * Istio. Don't install Istio as a MicroK8s add-on, since MicroK8s will > install an old version!
+> * Storage. MicroK8s comes with its own storage provider (microk8s.io/>hostpath) which the storage add-on enables as well as creating a default K8s storage class called microk8s-hostpath.
+
+
+Set up the KUBECONFIG variable to make kubectl accessible
+```
+export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
+```
+> Note to make the k8s accessible from outside of the VM
+> Copy out the K8s admin creds
+> ```
+> cat /var/snap/microk8s/current/credentials/client.config
+> ```
+> save them to a local file outside the VM and replace the IP address of the server URL with that of your Multipass VM, e.g.
+server: https://192.168.64.28:16443
+> Run the following command outside the VM to grab the IP address
+>
+>Finally, export KUBECONFIG so kubectl, istioctl and friends know where the cluster is
+> ```
+> export KUBECONFIG=/path/to/your/copy/of/client.config.  
+> ```
+
+### Install the mesh
+
+First of all made $dir$/deployment/ your current dir
+
