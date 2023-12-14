@@ -191,6 +191,11 @@ Notice that you can actually be selective about which services get
 an Envoy sidecar, but for now we'll just apply a blanket policy to
 keep things simple.
 
+A final check to see if istio is deployed in k8s
+```
+kubectl get pod -A
+```
+
 #### Argo CD
 
 Argo CD is our declarative continuous delivery engine. Except for
@@ -238,3 +243,9 @@ CD with the password you entered in our secret. To do that, just
 ```bash
 kubectl -n argocd delete secret argocd-initial-admin-secret
 ```
+
+Again, check to see if argocs is deployed in k8s as well
+```
+kubectl get pod -A
+```
+
