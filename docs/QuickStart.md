@@ -105,13 +105,9 @@ Check the status of k8s
 kubectl get pod -A
 ```
 Something like this should appear
-``
-NAMESPACE     NAME                                       READY   STATUS    RESTARTS       AGE
-kube-system   calico-kube-controllers-6c99c8747f-shqv8   1/1     Running   35 (22m ago)   132m
-kube-system   hostpath-provisioner-58694c9f4b-xdmm2      1/1     Running   2 (19m ago)    127m
-kube-system   coredns-7745f9f87f-9dqgw                   1/1     Running   2 (19m ago)    132m
-kube-system   calico-node-rvbzw                          1/1     Running   2 (19m ago)    132m
-``
+
+![screenshot](./images/microk8s-1.png "screenshot)
+
 ### Setup the network
 
 The mesh we're going to roll out needs to be connected to some ports
