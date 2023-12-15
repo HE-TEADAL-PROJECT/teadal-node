@@ -15,7 +15,7 @@ To use this code in its current state to develope an FDP, fork this repo and tha
 ![Prototype tech stack.][dia.tech-stack]
 
 
-[docs]: ./docs/README.md
+[docs]: ./docs/QuickStart.md
 [dia.tech-stack]: ./docs/tech-stack.svg
 [fdp-dummy]: ./deployment/pilot-services/fdp-dummy/base.yaml
 [fdp-opa]: ./deployment/mesh-infra/security/opa/rego/fdpdummy/service.rego
