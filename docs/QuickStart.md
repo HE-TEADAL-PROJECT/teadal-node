@@ -1,6 +1,8 @@
 ### Setup the enviroment
 
-First off, you should install Nix and enable the Flakes extension
+First off, you should install Nix and enable the Flakes extension.
+
+For that connect to the machine you want to install the Teadal node to and than run follow the guide below. 
 
 ```
 sh <(curl -L https://nixos.org/nix/install) --daemon
