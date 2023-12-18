@@ -145,21 +145,18 @@ over to distributed storage backed by local disks on each node. (We
 set up DirectPV for that, but we could also use Longhorn or something
 else.)
 
-We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by
-disk partitions, but we'll cheat a bit and create dirs straight into
-the `/mnt` directory. (For the record, here's the proper way of
-doing [this sort of thing][proper-ls].) Anyhoo, let's go on with
-creating the dirs. SSH into the target node, then
 
-```bash
-sudo mkdir -p /data/d{1..5}
-sudo chmod -R 777 /data
-```
+[comment]: # (We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by disk partitions, but we'll cheat a bit and create dirs straight into the `/mnt` directory. For the record, here's the proper way of doing [this sort of thing][proper-ls]. Anyhoo, let's go on with creating the dirs. SSH into the target node, then)
+
+[comment]: # (```bash)
+[comment]: # (sudo mkdir -p /data/d{1..5})
+[comment]: # (sudo chmod -R 777 /data)
+[comment]: # (```)
 
 Now get back to your Teadal repo on your local machine and run
 
 ```bash
-kustomize build mesh-infra/storage/pv/local/devm/ | kubectl apply -f -
+kustomize build mesh-infra/storage/pv/local/tv-teadal/ | kubectl apply -f -
 ```
 
 
