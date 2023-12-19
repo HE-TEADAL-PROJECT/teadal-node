@@ -30,7 +30,7 @@ spec:
         valueFiles: 
         - $baselineroot/deployment/plat-infra-services/airflow/official/helm-values.yaml # fetches our own values-file from cloud-baseline repo (1)
     - repoURL: https://gitlab.teadal.ubiwhere.com/baseline/cloud-baseline.git 
-      targetRevision: airflow-local-storage
+      targetRevision: airflow-local-storage # Change depending on where you store the value files you want to use
       ref: baselineroot
   destination:
     server: "https://kubernetes.default.svc"
