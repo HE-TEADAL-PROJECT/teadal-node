@@ -81,6 +81,10 @@ spec:
             value: LTXG5CVY0MXLE0WO75Q6
           - name: MINIO_SECRET_KEY
             value: IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE
+          - name: BUCKETNAME
+            value: teadal
+          - name: FILENAME
+            value: patients.json
           resources:
             limits:
               cpu: 100m
