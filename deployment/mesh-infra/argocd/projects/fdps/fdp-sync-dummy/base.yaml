@@ -93,7 +93,7 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: "sfdp-sync-dummy-virtual-service"
+  name: "fdp-sync-dummy-virtual-service"
 spec:
   gateways:
   - "teadal-gateway"
