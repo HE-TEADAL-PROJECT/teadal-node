@@ -19,13 +19,13 @@ import data.minio.service as minio
 default allow := false
 
 allow {
-    fdpsyncdummy
+    fdpsyncdummy.allow
 }
 
 # or
 
 allow {
-    sfdpsyncdummy
+    sfdpsyncdummy.allow
 }
 
 # or
