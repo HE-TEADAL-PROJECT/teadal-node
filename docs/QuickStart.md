@@ -54,11 +54,10 @@ If your VM has slow I/O Disk (like in case of POLIMI testbed), it is suggested t
 microk8s disable ha-cluster --force
 ```
 
-Finally bolt on DNS and local storage
+Finally bolt on DNS
 
 ```
 microk8s enable dns
-microk8s enable hostpath-storage
 ```
 
 Wait until all the above extras show in the "enabled" list and the removed ha-cluster is in the "disabled" list
@@ -138,12 +137,83 @@ First of all made $dir$/deployment/ your current dir
 
 #### K8s storage
 
-We'll start off with microk8s `hostpath-storage` for now since we've only got one
-node in the cluster. Later on, when we add more nodes, we'll switch
-over to distributed storage backed by local disks on each node. (We
-set up DirectPV for that, but we could also use Longhorn or something
-else.)
+There are various ways to handle storage on a TEADAL node. If you want to 
+become familiar with some of them you may read [the storage notes](storage-notes.md).
 
+In this guide, we will describe how to set up local storage manually. For 
+single node solutions this is a easy way to quickly provide some storage for your pods.
+When adding more nodes, we may require different solutions (distributed storage), but lets not worry 
+about that now.
+
+We'll have to create at least 8 PVs of 5GB each and 1 PV of 20GB. Ideally these
+should be backed by disk partitions, but for simplicity's sake we'll go and create 
+directories directly on the `/mnt` directory. To do so, you may execute:
+
+```bash
+sudo mkdir -p /data/d{1..10}
+```
+
+To ensure that the pods will have the right permissions to write on these folders,
+you may give full write permissions on the folder you just created with the following
+command:
+
+```bash 
+sudo chmod -R 777 /data
+```
+
+After creating these directories and properly set permissions, it should be time
+to deploy the PVs on the cluster. 
+However, there is a parameter that should before applying the PV's. For example, in `mesh-infra/storage/pv/local/devm/devm-1.yaml`:
+
+```yaml
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - <NODE_NAME>
+```
+You need to set `<NODE_NAME>` to the name of the node that this storage belongs to.
+In a single node, microk8s deployment, this should be equal to your hostname, but that 
+is not always the case, so do check with the commands below:
+
+```bash
+$ hostname
+devm  
+
+$ kubectl get nodes
+NAME   STATUS   ROLES    AGE    VERSION
+devm   Ready    <none>   167d   v1.27.8
+```
+
+Ideally you should create a folder similar to `mesh-infra/storage/pv/local/devm/` 
+or `mesh-infra/storage/pv/local/tv-teadal`, with the PV configurations for your machine.
+You may name the folder `<NODE_NAME>`, for example.
+
+If you do create a new folder, don't forget to change the 
+`kustomization.yaml` file on `/deployment/mesh-infra/storage/pv/local/` to point to this new directory:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- <NODE-NAME>
+#- devm
+# - tv-teadal
+
+```
+
+Afterwards you can apply your changes with:
+
+```bash
+kustomize build mesh-infra/storage/pv/local/<NODE_NAME>/ | kubectl apply -f -
+```
+
+This should make the storage you created ready to be used by the pods you will 
+initialize in the next steps.
 
 [comment]: # (We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by disk partitions, but we'll cheat a bit and create dirs straight into the `/mnt` directory. For the record, here's the proper way of doing [this sort of thing][proper-ls]. Anyhoo, let's go on with creating the dirs. SSH into the target node, then)
 
@@ -152,15 +222,15 @@ else.)
 [comment]: # (sudo chmod -R 777 /data)
 [comment]: # (```)
 
-Make sure the `hostpath-storage` addon is enabled on microk8s by checking the presence of this add-on the in the 'enabled' list
+[comment]: # (Make sure the `hostpath-storage` addon is enabled on microk8s by checking the presence of this add-on the in the 'enabled' list)
 
-```
-microk8s status
-```
+[comment]: # (```)
+[comment]: # (microk8s status)
+[comment]: # (```)
 
-If every PersistentVolumeClaim has it's StorageClass field set to `microk8s-hostpath`,
-the microk8s addon will helpfully provision all PersistentVolumes necessary, so 
-no further action is necessary here. By default, the code should be already configured to be compliant with this approach.
+[comment]: # (If every PersistentVolumeClaim has it's StorageClass field set to `microk8s-hostpath`,)
+[comment]: # (the microk8s addon will helpfully provision all PersistentVolumes necessary, so)
+[comment]: # (no further action is necessary here. By default, the code should be already configured to be compliant with this approach.)
 
 
 #### K8s secrets
