@@ -57,6 +57,7 @@ metadata:
   labels:
     app: fdp-sync-dummy
   name: fdp-sync-dummy
+  namespace: default
 spec:
   replicas: 1
   selector:

@@ -57,6 +57,7 @@ metadata:
   labels:
     app: sfdp-sync-dummy
   name: sfdp-sync-dummy
+  namespace: default
 spec:
   replicas: 1
   selector:
