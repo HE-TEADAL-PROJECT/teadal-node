@@ -290,6 +290,30 @@ state with YAML files that we keep in the `deployment` dir within
 our GitHub repo. Argo CD takes care of reconciling the current cluster
 state with what we declared in the repo.
 
+To make this magic happens you have to inform configure ArgoCD about the repository to consider as source of information. You have to edit the app.yaml file
+
+```bash
+nano mesh-infra/argocd/projects/base/app.yaml
+```
+
+and substitute the <REPO_URL> with the name of your pilot repo (e.g., https://gitlab.teadal.ubiwhere.com/teadal-pilots/mobility-pilot/mobility-teadal-node.git)
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app
+  namespace: argocd
+spec:
+  project: mesh-infra
+  source:
+    repoURL: <REPO_URL>
+    targetRevision: HEAD
+    path: deployment/mesh-infra/app
+
+```
+
+
 For that to happen, we've got to deploy Argo CD and tell it to use
 the YAML in our repo to populate the cluster. Our repo also contains
 the instructions for Argo CD to manage its own deployment state as
