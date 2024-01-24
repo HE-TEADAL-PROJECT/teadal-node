@@ -6,6 +6,12 @@ resources:
 - devm-2.yaml
 - devm-3.yaml
 - devm-4.yaml
+- devm-5.yaml
+- devm-6.yaml
+- devm-7.yaml
+- devm-8.yaml
+- devm-9.yaml
+- devm-10.yaml
 
 # NOTE
 # ----
