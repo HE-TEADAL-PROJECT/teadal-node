@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"context"
-	"encoding/base64"
 	"fmt"
 	"os"
 	"strings"
@@ -145,14 +144,14 @@ func PrepareArgoCd(ctx context.Context, client kubernetes.Interface) error {
 	}
 	argoURL = strings.TrimSuffix(argoURL, "\n")
 
-	fmt.Print("Please enter the deployment token username (generated on Gitlab): ")
+	fmt.Print("Please enter the deployment token username (generated on Gitlab):")
 	username, err := reader.ReadString('\n')
 	if err != nil {
 		return err
 	}
 	username = strings.TrimSuffix(username, "\n")
 
-	token, err := askPassword("Please enter the deployment token (generated on Gitlab): ")
+	token, err := askPassword("Please enter the deployment token (generated on Gitlab)")
 	if err != nil {
 		return err
 	}
@@ -184,12 +183,9 @@ func PrepareArgoCd(ctx context.Context, client kubernetes.Interface) error {
 
 	currentTime := time.Now()
 	formattedTime := currentTime.UTC().Format("2006-01-02T15:04:05Z")
-	encodedTime := base64.StdEncoding.EncodeToString([]byte(formattedTime))
-	encodedPwd := base64.StdEncoding.EncodeToString([]byte(pwd))
-
 	err = CreateOrUpdateSecret(ctx, client, "argocd", "argocd-secret", map[string]string{
-		"admin.password":      encodedPwd,
-		"admin.passwordMtime": encodedTime,
+		"admin.password":      pwd,
+		"admin.passwordMtime": formattedTime,
 	}, map[string]string{
 		"app.kubernetes.io/name":    "argocd-secret",
 		"app.kubernetes.io/part-of": "argocd",

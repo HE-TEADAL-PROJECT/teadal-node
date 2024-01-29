@@ -3,7 +3,6 @@ module gitlab.teadal.ubiwhere.com/teadal-tech/node.config
 go 1.20
 
 require (
-	golang.org/x/crypto v0.18.0
 	golang.org/x/term v0.16.0
 	k8s.io/api v0.29.1
 	k8s.io/apimachinery v0.29.1
