@@ -70,7 +70,7 @@ spec:
     spec:
       containers:
         - name: fdp-sync-dummy
-          image: polimiis/teadal-base-fdp-sync
+          image: registry.teadal.ubiwhere.com/teadal-public-images/dummy-services/teadal-base-fdp-sync
           ports:
           - containerPort: 8080
           env: #  Not ideal to hardcode the minio credentials, but we can't mount secrets from a different namespace so ...
