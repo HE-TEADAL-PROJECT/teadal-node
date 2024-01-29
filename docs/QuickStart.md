@@ -689,7 +689,7 @@ resources:
 
 >If you want to know more about the manifests of these two components, please refer to the files in the folders `plat-app-services/fdp-sync-dummy` and `plat-app-services/sfdp-sync-dummy`.
 
-Finally, enable the opa rules related to these services:
+Then, enable the opa rules related to these services:
 
 ```bash
 nano mesh-infra/security/opa/kustomization.yaml
@@ -722,6 +722,42 @@ secretGenerator:
 ```
 
 > Again, if you want to explore the OPA Rego rules for these two components, please refer to the files in the folders `mesh-infra/security/opa/rego/fdpsyncdummy/` and `mesh-infra/security/opa/rego/fdpsyncdummy/`.
+
+Finally, update the to include also the evaluation of the rules for the dummy services
+
+```
+package teadal
+
+import data.fdpsyncdummy.service as fdpsyncdummy
+import data.sfdpsyncdummy.service as sfdpsyncdummy
+import data.httpbin.service as httpbin
+import data.minio.service as minio
+
+
+default allow := false
+
+allow {
+      fdpsyncdummy.allow
+}
+
+# or
+
+allow {
+    sfdpsyncdummy.allow
+}
+
+# or
+
+allow {
+    httpbin.allow
+}
+
+# or
+
+allow {
+    minio.allow
+}
+```
 
 After all these modifications, commit the changes to the origin repo via git. Wait some minutes for ArgoCD to fecth the changes and you will see the FDP and SFDP in the list of deployed pods.
 
