@@ -24,6 +24,8 @@ func printHelp() {
 	fmt.Printf("To use, pass a space-separated, list of tuples with your requirements\n")
 	fmt.Printf("For example, for 2 10GB PV and 1 20GB PV: \n")
 	fmt.Printf("pvlocalgen 2:10 1:20\n")
+	fmt.Printf("\nTo select which path the PVs point to, use the path flag:\n")
+	fmt.Printf("pvlocalgen --path=/mnt/data 2:10 1:20\n")
 }
 
 type PVKustomize struct {
@@ -66,10 +68,10 @@ func createPV(storage string, node_name string, volume_name string, path string)
 	}
 }
 
-func writePV(index int, storage string, node_name string) error {
+func writePV(index int, path_prefix string, storage string, node_name string) error {
 	i_to_string := strconv.Itoa(index)
 	volume_name := node_name + "-" + i_to_string
-	path := "/mnt/data/d" + i_to_string
+	path := path_prefix + "/d" + i_to_string
 	new_pv := createPV(storage, node_name, volume_name, path)
 
 	file_name := node_name + "/" + node_name + "-" + i_to_string + ".yaml"
@@ -118,7 +120,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	list_of_pvs := os.Args[1:]
+	path_prefix := flag.String("path", "/mnt/data", "")
 
 	var kubeconfig *string
 	if home := homedir.HomeDir(); home != "" {
@@ -127,6 +129,8 @@ func main() {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
 	flag.Parse()
+
+	list_of_pvs := flag.Args()
 
 	// use the current context in kubeconfig
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
@@ -171,7 +175,7 @@ func main() {
 		}
 
 		for i := 1; i <= nr_of_pvs; i++ {
-			if err := writePV(index, storage, node_name); err != nil {
+			if err := writePV(index, *path_prefix, storage, node_name); err != nil {
 				panic(err.Error())
 			}
 			index++
