@@ -59,7 +59,18 @@ func main() {
 				Usage:  "set/reset all teadal node secrets",
 				Action: SecretCmd,
 			},
-			//TODO: add @jcatarino pv creation tool here?
+			{
+				Name:   "pv",
+				Usage:  "generate pvs for your teadal node",
+				Action: PvCmd,
+				Subcommands: []*cli.Command{
+                    {
+                        Name:  "help",
+                        Usage: "print command help",
+                        Action: PrintHelp,
+                        },
+                    },
+			},
 		},
 		After: func(ctx *cli.Context) error {
 			fmt.Println("🎉 you are all set, happy TEADALing 🎉")

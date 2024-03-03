@@ -165,10 +165,10 @@ command:
 sudo chmod -R 777 /mnt/data
 ```
 
-Now it is time to generate the .yaml files to setup the storage. To this aim, there is a tool developed named ``pvlocalgen`` that can be used and that has been included in the nix shell. This tool creates a folder named as <HOST_NAME> with the required files that must be moved to the proper location afterwards
+Now it is time to generate the .yaml files to setup the storage. To this aim, there is a tool developed named ``node.config`` that can be used and that has been included in the nix shell. This tool creates a folder named as <HOST_NAME> with the required files that must be moved to the proper location afterwards
 
 ```bash
-pvlocalgen 1:20 8:10
+node.config -microk8s pv 1:20 8:10
 mv <HOST_NAME> ../deployment/mesh-infra/storage/pv/local/
 ```
 
