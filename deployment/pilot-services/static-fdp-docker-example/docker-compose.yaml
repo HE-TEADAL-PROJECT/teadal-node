@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  sfdp:
+    image: nginx:1.25.4
+    ports:
+      - 8000:80
+    volumes:
+      - ./data:/usr/share/nginx/html
