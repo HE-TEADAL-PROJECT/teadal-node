@@ -49,7 +49,7 @@ Under `deployment/pilot-services` create a new folder for your FDP named as <NAM
 mkdir pilot-services/<NAME_OF_YOUR_FDP>
 ```
 
-Then copy there the two template files [app.yaml](./templates/microk8s/base.yaml) and [kustomization.yaml](./templates/microk8s/kustomization.yaml). Also in this case, only the latter requires some changes. See them step by step.
+Then copy there the two template files [base.yaml](./templates/microk8s/base.yaml) and [kustomization.yaml](./templates/microk8s/kustomization.yaml). Also in this case, only the latter requires some changes. See them step by step.
 
 At the beginning the manifest define the k8s service. Please note that regardless of the port that is used to expose the service, because of Istio, all the services will be available on port 80.
 
