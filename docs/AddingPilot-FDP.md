@@ -230,6 +230,36 @@ user_to_roles := {
 Please note that, based on the complexity of the access control of your FDP, you can create more that one OPA rego file. What it is important is that at least one of it is named 'rbacdb.rego' to create a link with the rest of the system.
 
 
+Last step about OPA is to inform the system about the existence of these rego files. To this aim, the ``deployment/mesh-infra/security/opa/kustomization.yaml'' file must be updated
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ingress-policy.yaml
+- opa-envoy-plugin.yaml
+
+secretGenerator:
+- name: opa-policy
+  files:
+  - rego/main.rego
+  - authnz.envopa.rego=rego/authnz/envopa.rego
+  - authnz.http.rego=rego/authnz/http.rego
+  - authnz.oidc.rego=rego/authnz/oidc.rego
+  - authnz.rbac.rego=rego/authnz/rbac.rego
+  - config.oidc.rego=rego/config/oidc.rego
+  - fdpsyncdummy.service.rego=rego/fdpsyncdummy/service.rego
+  - fdpsyncdummy.rbacdb.rego=rego/fdpsyncdummy/rbacdb.rego
+  - sfdpsyncdummy.service.rego=rego/sfdpsyncdummy/service.rego
+  - sfdpsyncdummy.rbacdb.rego=rego/sfdpsyncdummy/rbacdb.rego
+  - httpbin.service.rego=rego/httpbin/service.rego
+  - httpbin.rbacdb.rego=rego/httpbin/rbacdb.rego
+  - minio.service.rego=rego/minio/service.rego
+  - <NAME_OF_YOUR_FDP_FOR_REGO>.service.rego=rego/<NAME_OF_YOUR_FDP_FOR_REGO>/service.rego
+  - <NAME_OF_YOUR_FDP_FOR_REGO>.rbacdb.rego=rego/<NAME_OF_YOUR_FDP_FOR_REGO>/rbacdb.rego
+```
+
 ### Deploying the FDP
 
 After setting up everything you need to update the repo with your modification
