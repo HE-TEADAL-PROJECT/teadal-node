@@ -39,6 +39,17 @@ mkdir deployment/mesh-infra/argocd/projects/pilot-services/<NAME_OF_YOUR_FDP>
   value: pilot-services
 ```
 
+Last step is to update the kustomize.yaml file in the ``pilot-service'' directory. Here we need to add the name of the new folder
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- project.yaml
+- <NAME_OF_YOUR_FDP> 
+```
+
 In this way, when the repository is updated, ArgoCD knows that there is a new FDP to be deployed in your node.
 
 #### Inform Microk8s
