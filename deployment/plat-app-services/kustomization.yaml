@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
 - httpbin/
+- catalogue/
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
