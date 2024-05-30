@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kcong
+  labels:
+    io.kompose.service: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: cefriel/kcong-db:production
+        resources: {}
+        envFrom:
+        - configMapRef:
+            name: postgres-config
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-claim0
+        - mountPath: /backups
+          name: postgres-claim1
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: postgres-claim0
+        persistentVolumeClaim:
+          claimName: postgres-claim0
+      - name: postgres-claim1
+        persistentVolumeClaim:
+          claimName: postgres-claim1
+status: {}

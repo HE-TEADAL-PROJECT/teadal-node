@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kcong
+  labels:
+    io.kompose.service: celerybeat
+  name: celerybeat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: celerybeat
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: celerybeat
+    spec:
+      containers:
+      - args:
+        - /start-celerybeat
+        image: cefriel/kcong:backend_prod
+        name: celerybeat
+        envFrom:
+        - configMapRef:
+            name: django-config
+        resources: {}
+      restartPolicy: Always
+status: {}
