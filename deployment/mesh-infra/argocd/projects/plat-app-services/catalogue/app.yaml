@@ -1,6 +1,6 @@
 - op: replace
   path: /metadata/name
-  value: httpbin
+  value: catalogue
 - op: replace
   path: /spec/source/path
   value: deployment/plat-app-services/catalogue
