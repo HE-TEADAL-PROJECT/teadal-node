@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kepler
 
 resources:
+  - namespace.yaml
   - kepler-deployment.yaml
 
 commonLabels:
