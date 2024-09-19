@@ -1,0 +1,6 @@
+- op: replace
+  path: /metadata/name
+  value: kepler
+- op: replace
+  path: /spec/source/path
+  value: deployment/mesh-infra/kepler
