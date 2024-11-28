@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	core "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 )
