@@ -3,7 +3,7 @@
   value: advocate
 - op: replace
   path: /spec/source/path
-  value: deployment/plat-app-services/advocate
+  value: deployment/plat-infra-services/advocate
 - op: replace
   path: /spec/project
-  value: plat-app-services
+  value: plat-infra-services
