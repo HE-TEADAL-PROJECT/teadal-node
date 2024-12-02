@@ -8,9 +8,10 @@ resources:
 - ipfs.yaml  # You can comment this line if you are not willing to use the embeded ipfs and replace your desired ipfs.
 
 images:
-- name: git.tu-berlin.de:5000/teadal/advocate_pie:dev
-  newName: git.tu-berlin.de:5000/teadal/advocate_pie
-  newTag: teadal-node-dev-0.2
+#- name: git.tu-berlin.de:5000/teadal/advocate_pie:dev
+#  newName: git.tu-berlin.de:5000/teadal/advocate_pie
+#  newTag: teadal-node-dev-0.2
+- name: registry.teadal.ubiwhere.com/teadal-tech/advocate
    
 patches:
 - target:
