@@ -9,12 +9,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/component: query-layer
+      app.kubernetes.io/instance: thanos-query
       app.kubernetes.io/name: thanos-query
   template:
     metadata:
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
       labels:
+        app.kubernetes.io/component: query-layer
+        app.kubernetes.io/instance: thanos-query
         app.kubernetes.io/name: thanos-query
     spec:
       containers:
