@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: trust-plane
 
 resources:
+- namespace.yaml
 - advocate.yaml
 - ipfs.yaml  # You can comment this line if you are not willing to use the embeded ipfs and replace your desired ipfs.
 
