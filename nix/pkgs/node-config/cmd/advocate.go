@@ -27,9 +27,9 @@ func ConfigureAdvocateSecrets(ctx context.Context, client kubernetes.Interface,
 		wallet_key = fmt.Sprintf("\"%s\"", wallet_key)
 	}
 
-	if !strings.HasPrefix("\"0x", wallet_key) {
+	/*if !strings.HasPrefix("\"0x", wallet_key) {
 		return fmt.Errorf("The wallet key should be start with 0x and be in hexerdecimal format.")
-	}
+	}*/
 
 	sec.StringData = map[string]string{
 		"ADVOCATE_WALLET_PRIVATEKEY_FILE": wallet_key,
