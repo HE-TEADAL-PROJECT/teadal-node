@@ -8,7 +8,7 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels:
+    matchLabels: #matches the labels in template:
       app.kubernetes.io/component: query-layer
       app.kubernetes.io/instance: thanos-query
       app.kubernetes.io/name: thanos-query
