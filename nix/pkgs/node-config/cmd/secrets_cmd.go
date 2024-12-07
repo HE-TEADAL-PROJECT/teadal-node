@@ -11,7 +11,23 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func SecretCmd(ctx *cli.Context) error {
+func BasicNodeSecretCmd(ctx *cli.Context) error {
+	//We should maybe offer the means to not update but generate yaml files instead that then can be updated... but id didn't want to manage a bunch of structs just for the yaml stuff...
+	var err error
+
+	err = AskKeycloakPassword(ctx.Context, clientset)
+	if err != nil { //failed to create keycloak password... find out why
+		return err
+	}
+	err = PrepareArgoCd(ctx.Context, clientset)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func PostgresSecretCmd(ctx *cli.Context) error {
 	//We should maybe offer the means to not update but generate yaml files instead that then can be updated... but id didn't want to manage a bunch of structs just for the yaml stuff...
 	var err error
 
@@ -19,12 +35,17 @@ func SecretCmd(ctx *cli.Context) error {
 	if err != nil { //failed to create postgress password... find out why
 		return err
 	}
-	err = AskKeyCloakPassword(ctx.Context, clientset)
+	
+
+	return err
+}
+
+func KeycloakSecretCmd(ctx *cli.Context) error {
+	//We should maybe offer the means to not update but generate yaml files instead that then can be updated... but id didn't want to manage a bunch of structs just for the yaml stuff...
+	var err error
+
+	err = AskKeycloakPassword(ctx.Context, clientset)
 	if err != nil { //failed to create keycloak password... find out why
-		return err
-	}
-	err = PrepareArgoCd(ctx.Context, clientset)
-	if err != nil {
 		return err
 	}
 
@@ -41,7 +62,7 @@ func AskPostgresPassword(ctx context.Context, client kubernetes.Interface) error
 	}, map[string]string{})
 }
 
-func AskKeyCloakPassword(ctx context.Context, client kubernetes.Interface) error {
+func AskKeycloakPassword(ctx context.Context, client kubernetes.Interface) error {
 	pwd, err := askPassword("keycloak admin account")
 	if err != nil {
 		return err
