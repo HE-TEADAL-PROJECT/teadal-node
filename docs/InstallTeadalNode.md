@@ -16,11 +16,7 @@ We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 10
   - [Istio](#istio)
   - [ArgoCD](#argocd)
 - [Checking the installation](#checking-installation)
-- [Installing the add-ons](#installing-addons)
-  - [Advocate](#advocate)
-  - [Catalogue](#catalogue)
-- [Data Products management](#dataproducts)
-
+- [Next steps](#next-steps)
 
 ## Setup the enviroment <a name="setup-environment"/>
 
@@ -651,7 +647,7 @@ $ curl -i -X GET localhost/httpbin/get \
 You should see a `200` response in both cases. That just about wraps
 it up for the security show.
 
-## Next steps
+## Next steps <a name="next-steps" />
 
 Once the Teadal node is up and running, you are ready to install the Teadal tools you need for. To this aim refer to the related [guide](InstallTeadalTools.md).
 
