@@ -4,9 +4,9 @@ kind: Kustomization
 resources:
 - project.yaml
 - argocd
-- directpv
+# - directpv
 # - grafana
-- jaeger
+# - jaeger
 - keycloak
 # - kiali
 - minio
@@ -16,4 +16,4 @@ resources:
 - reloader
 - routing
 - sc
-- kepler
+# - kepler
