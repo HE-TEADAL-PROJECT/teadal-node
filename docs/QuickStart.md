@@ -12,9 +12,27 @@ In addition to these tools, TEADAL project is providing advanced tools to enable
 
 We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
-## Setup the enviroment
+## Table of contents
+- [Setup the environment](#setup-environment)
+  - [Git repo](#git-repo)
+  - [Nix](#nix)
+- [Setup the K8s cluster](#setup-cluster)
+  - [Install MicroK8S](#microk8s)
+  - [K8s storage](#k8sstorage)
+- [Setup the network](#setup-network)
+- [Setup the mesh](#setup-mesh)
+  - [Istio](#istio)
+  - [ArgoCD](#argocd)
+- [Checking the installation](#checking-installation)
+- [Installing the add-ons](#installing-addons)
+  - [Advocate](#advocate)
+  - [Catalogue](#catalogue)
+- [Data Products management](#dataproducts)
 
-### Git repo
+
+## Setup the enviroment <a name="setup-environment"/>
+
+### Git repo <a name="git-repo"/>
 
 We assume that a fork (or a copy in case you do not want to be updated with the new releases) of the TEADAL node has been created. This node will contain the specific configuration for your installation. One repo = one TEADAL node. Adopting ArgoCD as CI/CD tool that directly fetches the repo to realize which are the tools that must be deployed, we suggest to have one repo for each of the TEADAL node deployments. 
 
@@ -33,7 +51,7 @@ Then *Expand>Add token* and insert a new token like the one in the following fig
 
 ![screenshot_newdeploytoken](./images/gitlab-new-deploy-token.png)
 
-### Nix 
+### Nix <a name="nix"/>
 
 Nix environment is required to run the basic command tools. Thus, first install Nix
 
@@ -59,9 +77,9 @@ it should return something like ``argocd: v2.7.6``
 
 Now all the command must be executed inside the Nix shell.
 
-## Setup the K8s cluster
+## Setup the K8s cluster <a name="setup-cluster"/>
 
-### Install MicroK8S
+### Install MicroK8S <a name="microk8s"/>
 
 We'll use MicroK8s as a cluster manager and orchestration. Install MicroK8s (upstream Kubernetes 1.27)
 
@@ -153,7 +171,7 @@ Now, make **`$dir$/deployment/`** your current dir. If you are in the ``nix`` di
  cd ../deployment
  ```
 
-### K8s storage
+### K8s storage <a name="k8sstorage"/>
 
 There are various ways to handle storage on a TEADAL node. In this guide, we will describe how to set up local storage manually. For single node solutions this is a easy way to quickly provide some storage for your pods.
 When adding more nodes, we may require different solutions (distributed storage), but lets not worry 
@@ -220,7 +238,7 @@ initialize in the next steps.
 
 
 
-## Setup the network
+## Setup the network <a name="setup-network"/>
 
 The mesh we're going to roll out needs to be connected to some ports
 on the external network. Clients on the external network hit port `80`
@@ -243,14 +261,9 @@ there's no firewall. In a public cloud scenario, e.g. AWS, you
 typically have an admin console that lets you easily make ports
 available to clients out in the interwebs.
 
-## Setup the mesh
+## Setup the mesh <a name="setup-mesh"/>
 
-
-
-
-
-
-### Istio
+### Istio <a name="istio"/>
 
 Don't install Istio as a MicroK8s add-on, since MicroK8s will install an old version! For this reason, it is required to follow the following procedure
 
@@ -282,8 +295,9 @@ kubectl get pod -A
 
 ![screenshot](./images/microk8s-2.png)
 
-#### ArgoCD connection
+### ArgoCD  <a name="argocd"/>
 
+#### Connection with the repo
 To allow ArgoCD to be aligned with the gitlab repo you have to edit the app.yaml file
 
 ```bash
@@ -387,7 +401,7 @@ After sometime this command returns the basic set of pods up and running.
 
 You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
 
-### Basic secrets
+### Basic secrets <a name="basic-secrets"/>
 
 <!--```bash
 kubectl apply -f mesh-infra/argocd/namespace.yaml
@@ -448,7 +462,7 @@ It takes a while (about 20 mins) but at the end everything should be in running 
 kustomize build mesh-infra/security/secrets | kubectl apply -f -
 ```-->
 
-## Checking the installation
+## Checking the installation <a name="checking-installation"/>
 
 <!--You can now test the installation to see if everything is working
 
@@ -649,7 +663,7 @@ You should see a `200` response in both cases. That just about wraps
 it up for the security show.
 
 
-# TEADAL add-ons
+# TEADAL add-ons <a name="teadal-addons"/>
 
 
 <!--#### DBs
@@ -864,7 +878,7 @@ curl -i -X GET localhost/sfdp-sync-dummy/patients \
 ``` -->
 
 
-## Advocate deployment
+## Advocate deployment <a name="advocate"/>
 
 For Advocate to work flawlessly, you need to have permissions to create cluster resources and namespaces.
 We assume your cluster is running a recent version of Jaeger that this node can reach. Before Advocate will work you will need to configure all needed secrets, variables for Advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that run this command:
@@ -888,3 +902,11 @@ kubectl logs <advocate-pod-name> -n trust-plane
 ```
 ![screenshot](./images/advocate-pod-log.png)--># Basic Teadal Node installation
 
+
+## Catalogue deployment <a name="catalog"/>
+
+TBD
+
+# Data product management <a name="dataproducts"/>
+
+Please refer to this page
