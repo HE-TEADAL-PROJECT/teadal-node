@@ -423,17 +423,17 @@ node.config -microk8s basicnode-secrets
 ![screenshot](./images/microk8s-config-node.png)-->
 
 
-After few minutes, ArgoCD starts fecthing the repo and deploying the required containers. Now, when executing 
+After about 5 minutes, ArgoCD starts fecthing the repo and deploying the required containers. Now, when executing 
 
 ```bash
 kubectl get pod -A
 ```
 
-the cluster returns a long set of pods 
+the cluster returns all the pods related to the basic tools installed
 
 ![screenshot](./images/microk8s-5.png)
 
-It takes a while (about 20 mins) but at the end everything should be in running status.
+It takes a while (about 5 mins depending on your network) but at the end everything should be in running status.
 
 > In case nothing changes, it could be beneficial to stop and start the cluster
 >
@@ -651,9 +651,9 @@ $ curl -i -X GET localhost/httpbin/get \
 You should see a `200` response in both cases. That just about wraps
 it up for the security show.
 
+## Next steps
 
-# TEADAL add-ons <a name="teadal-addons"/>
-
+Once the Teadal node is up and running, you are ready to install the Teadal tools you need for. To this aim refer to the related [guide](InstallTeadalTools.md).
 
 <!--#### DBs
 
@@ -867,35 +867,3 @@ curl -i -X GET localhost/sfdp-sync-dummy/patients \
 ``` -->
 
 
-## Advocate deployment <a name="advocate"/>
-
-For Advocate to work flawlessly, you need to have permissions to create cluster resources and namespaces.
-We assume your cluster is running a recent version of Jaeger that this node can reach. Before Advocate will work you will need to configure all needed secrets, variables for Advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that run this command:
-```bash
-node.config -advocate
-```
-Now you can enter the required values. For the question about the "ADVOCATE_ETH_POA" , enter "1" as value.
-
-Check pods that are in Trust-plane namespace:
-
-```bash
-kubectl get pods -n trust-plane
-```
-
-![screenshot](./images/trust-plane-namespace-podes.png)
-
-Check the Advocate pod log to make sure that it is up and running:
-
-```bash
-kubectl logs <advocate-pod-name> -n trust-plane
-```
-![screenshot](./images/advocate-pod-log.png)--># Basic Teadal Node installation
-
-
-## Catalogue deployment <a name="catalog"/>
-
-TBD
-
-# Data product management <a name="dataproducts"/>
-
-Please refer to this page
