@@ -1,17 +1,5 @@
 # Basic Teadal Node installation
 
-This document provides a guide to install the basic features of the TEADAL node installation which is composed based on MicroK8S and includes:
-* ArgoCD to automate the deployment
-* Istio control plane
-* Minio to store system files and also available as data lake storage
-* Keycloak as Identity and Authentication
-* Jaeger for advance tracing used to monitor the activities
-* OPA as policy manager
-
-In addition to these tools, TEADAL project is providing advanced tools to enable data sharing among TEADAL nodes.
-
-We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
-
 ## Table of contents
 - [Setup the environment](#setup-environment)
   - [Git repo](#git-repo)
