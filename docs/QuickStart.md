@@ -1,8 +1,41 @@
-### Setup the enviroment
+# Basic Teadal Node installation
 
-First off, you should install Nix and enable the Flakes extension.
+This document provides a guide to install the basic features of the TEADAL node installation which is composed based on MicroK8S and includes:
+* ArgoCD to automate the deployment
+* Istio control plane
+* Minio to store system files and also available as data lake storage
+* Keycloak as Identity and Authentication
+* Jaeger for advance tracing used to monitor the activities
+* OPA as policy manager
 
-For that connect to the machine you want to install the Teadal node to and then follow the guide below. 
+In addition to these tools, TEADAL project is providing advanced tools to enable data sharing among TEADAL nodes.
+
+We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
+
+## Setup the enviroment
+
+### Git repo
+
+We assume that a fork (or a copy in case you do not want to be updated with the new releases) of the TEADAL node has been created. This node will contain the specific configuration for your installation. One repo = one TEADAL node. Adopting ArgoCD as CI/CD tool that directly fetches the repo to realize which are the tools that must be deployed, we suggest to have one repo for each of the TEADAL node deployments. 
+
+Now, you need to clone the repo on the machine that will host the node
+```bash
+git clone https://gitlab.teadal.ubiwhere.com/teadal-pilots/<name of pilot>/<name of pilot>.git
+```
+
+In addition, you have to generate a deploy token from the GitLab repository. 
+
+If your repo is on GitLab, then go to the screen *Setting>Repository>Deploy tokens*. 
+
+![screenshot_deploytoken](./images/gitlab-deploy-token.png)
+
+Then *Expand>Add token* and insert a new token like the one in the following figure. Take note of the *username* (if you do not indicate a name, gitlab will generate it) and the *token* created.
+
+![screenshot_newdeploytoken](./images/gitlab-new-deploy-token.png)
+
+### Nix 
+
+Nix environment is required to run the basic command tools. Thus, first install Nix
 
 ```bash
 sh <(curl -L https://nixos.org/nix/install) --daemon
@@ -10,12 +43,8 @@ mkdir -p ~/.config/nix
 echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 ```
 
-clone the repo
-```bash
-git clone https://gitlab.teadal.ubiwhere.com/teadal-pilots/<name of pilot>/<name of pilot>.git
-```
 As shown in the output of the installation, to use nix is required to restart the shell. 
-Then run the nix shell under the just cloned repo
+Once restarted, run the nix shell under the just cloned repo
 
 ```bash
 cd <clonerepo dir>/nix
@@ -28,7 +57,9 @@ argocd version --client --short
 ```
 it should return something like ``argocd: v2.7.6``
 
-Now all the command must be executed inside the Nix shell
+Now all the command must be executed inside the Nix shell.
+
+## Setup the K8s cluster
 
 ### Install MicroK8S
 
@@ -50,7 +81,7 @@ and then wait until MicroK8s is up and running
 microk8s status --wait-ready
 ```
 
-If your VM has slow I/O Disk (like in case of POLIMI testbed), it is suggested to remove also the high availability adds-on. To do it, the following command is required
+If your VM has slow I/O Disk, it is recommended to remove also the high availability adds-on. To do it, the following command is required
 
 ```bash
 microk8s disable ha-cluster --force
@@ -116,45 +147,13 @@ Something like this should appear
 
 ![screenshot](./images/microk8s-1.png)
 
-> **Note if you are going to deploy the node on a ARM64 machine**
->
-> The image of OPA available on official registries is only for AMD64. For this reason it is required to build and insert in the local registry an ARM64 based image. No worries, we have prepared everything, and you only need to run the following commands
->
->```bash
->cd nix
->nix build .#opa-envoy-plugin-img  #build the image
->cat result | gzip -d > opa.tar    #export in a file  
->microk8s ctr image import opa.tar #import in the local registry
->```
+Now, make **`$dir$/deployment/`** your current dir. If you are in the ``nix`` dir you have to type:
 
-### Setup the network
+ ```bash
+ cd ../deployment
+ ```
 
-The mesh we're going to roll out needs to be connected to some ports
-on the external network. Clients on the external network hit port `80`
-to access HTTP services. The Istio gateway uses a K8s node port to
-accept incoming traffic on port `80` and route it to the destination
-service inside the mesh. The Istio gateway also has a `5432` node port
-to let external clients interact with the Postgres DB inside the mesh.
-Additionally, the node port `3810` is configured on the Istio gateway 
-to route traffic to the kubeflow UI service.
-Finally admins will want to SSH into cluster nodes so port `22` should
-be open too as well as port `6443` which is the K8s API endpoint admin
-tools like `kubectl` should connect to.
-
-How you actually make these ports available to processes running
-outside the mesh really depends on your setup. In the most trivial
-case where your cluster is made up by a single node and that node
-is directly connected to the Internet, all you need to do is open
-those ports in the firewall, if you have a one, or do nothing if
-there's no firewall. In a public cloud scenario, e.g. AWS, you
-typically have an admin console that lets you easily make ports
-available to clients out in the interwebs.
-
-### Setup the mesh
-
-First of all made **`$dir$/deployment/`** your current dir
-
-#### K8s storage
+### K8s storage
 
 There are various ways to handle storage on a TEADAL node. In this guide, we will describe how to set up local storage manually. For single node solutions this is a easy way to quickly provide some storage for your pods.
 When adding more nodes, we may require different solutions (distributed storage), but lets not worry 
@@ -180,7 +179,7 @@ Now it is time to generate the .yaml files to setup the storage. To this aim, th
 
 ```bash
 node.config -microk8s pv 1:20 8:10
-mv <HOST_NAME> ../deployment/mesh-infra/storage/pv/local/
+mv <HOST_NAME> mesh-infra/storage/pv/local/
 ```
 
 Last step is to update the `mesh-infra/storage/pv/local/kustomization.yaml` file 
@@ -197,8 +196,6 @@ kind: Kustomization
 
 resources:
 - <HOST_NAME>
-# - devm
-# - tv-teadal
 ```
 
 Now it is time to apply your changes with:
@@ -210,9 +207,50 @@ kustomize build mesh-infra/storage/pv/local/ | kubectl apply -f -
 This should make the storage you created ready to be used by the pods you will 
 initialize in the next steps.
 
+> **Note if you are going to deploy the node on a ARM64 machine**
+>
+> The image of OPA available on official registries is only for AMD64. For this reason it is required to build and insert in the local registry an ARM64 based image. No worries, we have prepared everything, and you only need to run the following commands
+>
+>```bash
+>cd nix
+>nix build .#opa-envoy-plugin-img  #build the image
+>cat result | gzip -d > opa.tar    #export in a file  
+>microk8s ctr image import opa.tar #import in the local registry
+>```
 
 
-#### Istio
+
+## Setup the network
+
+The mesh we're going to roll out needs to be connected to some ports
+on the external network. Clients on the external network hit port `80`
+to access HTTP services. The Istio gateway uses a K8s node port to
+accept incoming traffic on port `80` and route it to the destination
+service inside the mesh. The Istio gateway also has a `5432` node port
+to let external clients interact with the Postgres DB inside the mesh.
+Additionally, the node port `3810` is configured on the Istio gateway 
+to route traffic to the kubeflow UI service.
+Finally admins will want to SSH into cluster nodes so port `22` should
+be open too as well as port `6443` which is the K8s API endpoint admin
+tools like `kubectl` should connect to.
+
+How you actually make these ports available to processes running
+outside the mesh really depends on your setup. In the most trivial
+case where your cluster is made up by a single node and that node
+is directly connected to the Internet, all you need to do is open
+those ports in the firewall, if you have a one, or do nothing if
+there's no firewall. In a public cloud scenario, e.g. AWS, you
+typically have an admin console that lets you easily make ports
+available to clients out in the interwebs.
+
+## Setup the mesh
+
+
+
+
+
+
+### Istio
 
 Don't install Istio as a MicroK8s add-on, since MicroK8s will install an old version! For this reason, it is required to follow the following procedure
 
@@ -252,7 +290,9 @@ To allow ArgoCD to be aligned with the gitlab repo you have to edit the app.yaml
 nano mesh-infra/argocd/projects/base/app.yaml
 ```
 
-and substitute the <REPO_URL> with the name of your pilot repo (e.g., https://gitlab.teadal.ubiwhere.com/teadal-pilots/mobility-pilot/mobility-teadal-node.git)
+and substitute the <REPO_URL> with the name of your pilot repo (e.g., https://gitlab.teadal.ubiwhere.com/teadal-pilots/mobility-pilot/mobility-teadal-node.git).
+
+In case you are working with a branch, substitute the ``targetRevision`` with the name of your branch.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -268,60 +308,8 @@ spec:
     path: deployment/mesh-infra/app
 ```
 
-<!--In addition, you have to generate a deploy token from the GitLab repository. To do so, on the GitLab web page of your repo, go to the screen *Setting>Repository>Deploy tokens*. The *Expand>Add token* and insert a new token like the one in the following figure. Tke note of the *username* and the *token* created.
+If you encouter some problems during the istio installation, maybe it is a matter of network configuration. Be sure that all the ports indicated above have been open.
 
-<!--N.B. For now it is not needed to generate the token. Use this one *gldt-FsyJDEno4jTfoCGi7Sy1*--
-
-Then copy the *username* and *token* values and insert the along with the <REPO_URL> in the `repo.yaml` file.
-
-Thus:
-
-```bash
-nano mesh-infra/security/secrets/repo.yaml
-```
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: teadal.node-repo
-  namespace: argocd
-  labels:
-    argocd.argoproj.io/secret-type: repository
-stringData:
-  type: git
-  url: <REPO_URL>
-
-  # GitLab "Deploy token" to let Argc CD read repo data.
-  # See:
-  # - https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node/-/settings/repository
-  username: <USER_NAME_DEFINED_IN_TOKEN_GENERATION>
-  password: <DEPLOY_TOKEN_GENERATED_BY_GITLAB>
-```
--->
-#### Advocate deployment
-
-For Advocate to work flawlessly, you need to have permissions to create cluster resources and namespaces.
-We assume your cluster is running a recent version of Jaeger that this node can reach. Before Advocate will work you will need to configure all needed secrets, variables for Advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that run this command:
-```bash
-node.config -advocate
-```
-Now you can enter the required values. For the question about the "ADVOCATE_ETH_POA" , enter "1" as value.
-
-Check pods that are in Trust-plane namespace:
-
-```bash
-kubectl get pods -n trust-plane
-```
-
-![screenshot](./images/trust-plane-namespace-podes.png)
-
-Check the Advocate pod log to make sure that it is up and running:
-
-```bash
-kubectl logs <advocate-pod-name> -n trust-plane
-```
-![screenshot](./images/advocate-pod-log.png)-->
 
 #### Argo CD deployment
 
@@ -399,7 +387,7 @@ After sometime this command returns the basic set of pods up and running.
 
 You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
 
-#### K8s secrets
+### Basic secrets
 
 <!--```bash
 kubectl apply -f mesh-infra/argocd/namespace.yaml
@@ -421,15 +409,15 @@ About the latter, it is required a step beforehand. You have to generate a deplo
 
 ![screenshot](./images/deploytoken.png =100x)
 
-Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for postgres, then for keycloak. For argocd, it is required to indicate the username and the value of the token generated before.
+Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for keycloak and argocd. For argocd, it is required to indicate the username and the value of the deploy token generated before in the repo.
 
 ```bash
-node.config -microk8s secrets
+node.config -microk8s basicnode-secrets
 ```
 
-A message informing that everything has been setup should appear
+<!--A message informing that everything has been setup should appear
 
-![screenshot](./images/microk8s-config-node.png)
+![screenshot](./images/microk8s-config-node.png)-->
 
 
 After few minutes, ArgoCD starts fecthing the repo and deploying the required containers. Now, when executing 
@@ -460,9 +448,9 @@ It takes a while (about 20 mins) but at the end everything should be in running 
 kustomize build mesh-infra/security/secrets | kubectl apply -f -
 ```-->
 
-### Checking the installation
+## Checking the installation
 
-You can now test the installation to see if everything is working
+<!--You can now test the installation to see if everything is working
 
 #### Argo CD
 
@@ -573,9 +561,9 @@ and pre-populates the Teadal realm automatically.
 Now you should check out how we secure data products. Our setup ain't
 exactly straightforward, so to make sense of the examples below you
 should probably first read about [our security architecture][sec],
-at least the conceptual model section.
+at least the conceptual model section.-->
 
-We'll use HttbBin to simulate a data product. There's a [policy][httpbin-rbac]
+To check if the basic installation is up and running, we'll use HttbBin to simulate a data product. There's a [policy][httpbin-rbac]
 that defines two roles:
 - *Product owner*. The owner may do any kind of HTTP request to URLs
    starting with `/httpbin/anything/`.
@@ -661,7 +649,10 @@ You should see a `200` response in both cases. That just about wraps
 it up for the security show.
 
 
-#### DBs
+# TEADAL add-ons
+
+
+<!--#### DBs
 
 At the moment we only have Postgres. Istio routes incoming TCP traffic
 from port `5432` to the Postgres server. Here's an easy way to get
@@ -870,4 +861,30 @@ patients data (remember to refresh the token if necessary).
 ```bash
 curl -i -X GET localhost/sfdp-sync-dummy/patients \
        -H "Authorization: Bearer ${jeejees_token}"
+``` -->
+
+
+## Advocate deployment
+
+For Advocate to work flawlessly, you need to have permissions to create cluster resources and namespaces.
+We assume your cluster is running a recent version of Jaeger that this node can reach. Before Advocate will work you will need to configure all needed secrets, variables for Advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that run this command:
+```bash
+node.config -advocate
 ```
+Now you can enter the required values. For the question about the "ADVOCATE_ETH_POA" , enter "1" as value.
+
+Check pods that are in Trust-plane namespace:
+
+```bash
+kubectl get pods -n trust-plane
+```
+
+![screenshot](./images/trust-plane-namespace-podes.png)
+
+Check the Advocate pod log to make sure that it is up and running:
+
+```bash
+kubectl logs <advocate-pod-name> -n trust-plane
+```
+![screenshot](./images/advocate-pod-log.png)--># Basic Teadal Node installation
+
