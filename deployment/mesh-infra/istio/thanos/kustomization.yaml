@@ -5,6 +5,7 @@ namespace: istio-system
 
 resources:
   # Base components di Thanos
+  - ./secrets/teadal-user-1.yaml
   - ./localpath/thanos-pv.yaml
   - ./localpath/pvc-thanos-store.yaml
   - ./localpath/thanos-store-deployment.yaml

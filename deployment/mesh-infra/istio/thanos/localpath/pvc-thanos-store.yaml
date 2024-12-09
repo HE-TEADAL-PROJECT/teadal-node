@@ -14,4 +14,4 @@ spec:
   volumeName: thanos-pv
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi

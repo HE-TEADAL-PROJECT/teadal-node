@@ -64,7 +64,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-bucket
-  namespace: minio-operator
+  namespace: minio-operator 
 spec:
   ttlSecondsAfterFinished: 100
   template:
