@@ -41,27 +41,27 @@ spec:
             limits:
               cpu: 100m
               memory: 512Mi
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: "dspn-webeditor-virtual-service"
-spec:
-  gateways:
-  - "teadal-gateway"
-  hosts:
-  - "*"
-  http:
-  - match:
-    - uri:
-        prefix: /dspn-webeditor/
-    - uri:
-        prefix: /dspn-webeditor
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: dspn-webeditor.default.svc.cluster.local
-        port:
-          number: 3000
+#---
+#apiVersion: networking.istio.io/v1beta1
+#kind: VirtualService
+#metadata:
+#  name: "dspn-webeditor-virtual-service"
+#spec:
+#  gateways:
+#  - "teadal-gateway"
+#  hosts:
+#  - "*"
+#  http:
+#  - match:
+#    - uri:
+#        prefix: /dspn-webeditor/
+#    - uri:
+#        prefix: /dspn-webeditor
+#    rewrite:
+#      uri: /
+#    route:
+#    - destination:
+#        host: dspn-webeditor.default.svc.cluster.local
+#        port:
+#          number: 3000
 
