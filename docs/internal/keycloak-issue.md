@@ -23,7 +23,8 @@ COMMANDS:
    keycloak-secrets   set/reset keycloak secrets
    advocate           configure advocate tool
    pv                 generate pvs for your teadal node
-   help, h            Shows a list of commands or help for one command```
+   help, h            Shows a list of commands or help for one command
+   ```
 
 8) Now we need to create a Postgres user named 'keycloak' that will be used by keycloak to store the needed data. To do this we need to run `node.config --microk8s postgres-secrets`. This command will ask for two passwords: a) the password for the typical root users (Postgres) b) the password for the key cloak user
 
