@@ -37,6 +37,6 @@ CREATE USER keycloak WITH PASSWORD 'the second password you specified in node.co
   ALTER DATABASE keycloak OWNER TO keycloak;
 ```
 
-10) re-deploy keycloak running `kubectl delete deployment/keycloak` and `kustomize build deployment/mesh-infra/security/keycloak | kubectl -f -`
+10) re-deploy keycloak running `kubectl delete deployment/keycloak` and `kustomize build deployment/mesh-infra/security/keycloak | kubectl apply -f -`
 
 11) if everything worked, after a couple of minutes running the `Kubectl get pod -A` you can see the keycloak pod correctly running along with its sidecar (thus 2/2 must appear)
