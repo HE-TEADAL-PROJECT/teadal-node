@@ -21,12 +21,12 @@ resources:
 
 
 patchesStrategicMerge:
-  # Personalizzazioni locali, se necessarie
+  #  local patches, if necessary
   # - custom-thanos-sidecar.yaml
   # - custom-thanos-query.yaml
 
 configMapGenerator:
-  # Configurazioni per Thanos
+  # Thanos Configurations
   #- name: thanos-config
   #files:
   #- thanos-config.yaml

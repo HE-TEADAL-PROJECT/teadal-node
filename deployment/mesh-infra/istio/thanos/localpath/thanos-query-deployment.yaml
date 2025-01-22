@@ -34,18 +34,18 @@ spec:
             secretKeyRef:
               name: minio-credentials
               key: secret_key
-        ports:                       # Aggiunta configurazione delle porte
+        ports:                       #  added ports configurations
         - name: http
           containerPort: 10902
         - name: grpc
           containerPort: 10901
-        livenessProbe:               # Probe per verifica di salute
+        livenessProbe:               # Probe for health verification 
           httpGet:
             path: /-/healthy
             port: 10902
           initialDelaySeconds: 10
           periodSeconds: 10
-        readinessProbe:              # Probe per verifica di prontezza
+        readinessProbe:              # Probe for health verification
           httpGet:
             path: /-/ready
             port: 10902
