@@ -3,6 +3,3 @@ kind: Kustomization
 
 resources:
 - <HOST_NAME>
-# - teadal-test-node
-# - tv-teadal
-#- teadal-baseline
