@@ -84,3 +84,24 @@ metadata:
   name: teadal-user-1
   namespace: minio-operator
 
+---
+apiVersion: v1
+data:
+  CONSOLE_ACCESS_KEY: S04zMzVHRjVKMEdBMTA0SE1INFM=
+  CONSOLE_SECRET_KEY: UmpMSlNFSHdQbWdCdGtEYnVxb0RpUTlFNDRVS2w2RjROdE9VMWpwTQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: teadal-user-1
+  namespace: istio-system #this to allow thanos to store info
+
+---
+apiVersion: v1
+data:
+  CONSOLE_ACCESS_KEY: S04zMzVHRjVKMEdBMTA0SE1INFM=
+  CONSOLE_SECRET_KEY: UmpMSlNFSHdQbWdCdGtEYnVxb0RpUTlFNDRVS2w2RjROdE9VMWpwTQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: teadal-user-1
+  namespace: default #this to allow fdp to use minio
