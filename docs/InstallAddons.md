@@ -114,7 +114,7 @@ Prometheus deployment is already configured to be installed in a plain mode or e
 
 #### Prometheus plain
 
-Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/istio/kustomization.yaml) has the line ``- prometheus`` uncommented and the line ``- thanos`` commented. E.g.:
+Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/kustomization.yaml) has the line ``- prometheus`` uncommented and the line ``- thanos`` commented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -128,7 +128,7 @@ resources:
 ...
 ```
 
-Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/istio/prometheus/kustomization.yaml) has the line ``- prometheus`` uncommented, while the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` commented. E.g.:
+Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/prometheus/kustomization.yaml) has the line ``- prometheus`` uncommented, while the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` commented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -146,7 +146,7 @@ resources:
 
 #### Prometheus with Thanos
 
-Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/istio/kustomization.yaml) has both the lines ``- prometheus`` and ``- thanos`` uncommented. E.g.:
+Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/kustomization.yaml) has both the lines ``- prometheus`` and ``- thanos`` uncommented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -160,7 +160,7 @@ resources:
 ...
 ```
 
-Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/istio/prometheus/kustomization.yaml) has the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` uncommented, while the line ``- prometheus`` commented. E.g.:
+Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/prometheus/kustomization.yaml) has the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` uncommented, while the line ``- prometheus`` commented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
