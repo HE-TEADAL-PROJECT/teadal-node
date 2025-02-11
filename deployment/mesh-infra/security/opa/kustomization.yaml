@@ -12,6 +12,7 @@ resources:
 
 secretGenerator:
 - name: opa-policy
+  namespace: minio-operator
   files:
   - bundles/basic-teadal-bundle.tar.gz
 #  - rego/main.rego
