@@ -44,8 +44,8 @@ spec:
       restartPolicy: Never
       volumes:
        - name: data-volume
-          secret:
-            secretName: basic-teadal-bundle
+         secret:
+           secretName: basic-teadal-bundle
 ---
 kind: Deployment
 apiVersion: apps/v1
