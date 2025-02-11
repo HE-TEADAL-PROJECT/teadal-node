@@ -35,10 +35,10 @@ spec:
           image: openpolicyagent/opa:0.53.1-envoy
           securityContext:
             runAsUser: 1111
-          volumeMounts:
-          - readOnly: true
-            mountPath: /policy
-            name: opa-policy
+          #volumeMounts:
+          #- readOnly: true
+          #  mountPath: /policy
+          #  name: opa-policy
           args:
           - "run"
           - "--server"
