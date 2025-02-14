@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: opa-policy-manager
+  name: opa-policy-manager
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: opa-policy-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: opa-policy-manager
+  name: opa-policy-manager
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa-policy-manager
+  template:
+    metadata:
+      labels:
+        app: opa-policy-manager
+    spec:
+      containers:
+        - name: opa-policy-manager
+          image: registry.teadal.ubiwhere.com/teadal-public-images/opa-policy-manager
+          ports:
+          - containerPort: 8080
+          env: 
+          - name: MINIO_SERVER
+            value: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"          
+           - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_SECRET_KEY
+          - name: BUCKET_NAME
+            value: "opa-policy-bundles"  
+          - name: BUNDLE_NAME
+            value: "teadal-policy-bundle-LATEST"                   
+          resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+#---
+#apiVersion: networking.istio.io/v1beta1
+#kind: VirtualService
+#metadata:
+#  name: "dspn-webeditor-virtual-service"
+#spec:
+#  gateways:
+#  - "teadal-gateway"
+#  hosts:
+#  - "*"
+#  http:
+#  - match:
+#    - uri:
+#        prefix: /dspn-webeditor/
+#    - uri:
+#        prefix: /dspn-webeditor
+#    rewrite:
+#      uri: /
+#    route:
+#    - destination:
+#        host: dspn-webeditor.default.svc.cluster.local
+#        port:
+#          number: 3000
+

@@ -34,9 +34,22 @@ user_perms(rbac_db, user) := perms {
 # fields. `method` is the HTTP request method whereas `path` is the
 # HTTP request path. Typically, when using the OPA Envoy plugin, you'd
 # pass in `input.attributes.request.http` for the request param.
-check(rbac_db, user, request) {
-    role := rbac_db.user_to_roles[user][_]
-    perm := rbac_db.role_to_perms[role][_]
+user_check(rbac_db, user, request) {
+    #role := rbac_db.user_to_roles[user][_]
+    #perm := rbac_db.role_to_perms[role][_]
+    #perm.methods[_] == request.method
+    #regex.match(perm.url_regex, request.path)
+    perm := rbac_db.user_based_permissions[user][_]
+    perm.methods[_] == request.method
+    regex.match(perm.url_regex, request.path)
+}
+
+role_check(rbac_db, role, request) {
+    #role := rbac_db.user_to_roles[user][_]
+    #perm := rbac_db.role_to_perms[role][_]
+    #perm.methods[_] == request.method
+    #regex.match(perm.url_regex, request.path)
+    perm := rbac_db.role_based_permissions[user][_]
     perm.methods[_] == request.method
     regex.match(perm.url_regex, request.path)
 }

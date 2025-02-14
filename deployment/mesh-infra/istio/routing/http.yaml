@@ -52,6 +52,18 @@ spec:
         host: minio.minio-operator.svc.cluster.local
         port:
           number: 80
+  - match:  
+    - uri:
+        prefix: /opa-policy-manager/
+    - uri:
+        prefix: /opa-policy-manager
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: opa-policy-manager.default.svc.cluster.local
+        port:
+          number: 8080
   - match:
     - port: 3810
     route:

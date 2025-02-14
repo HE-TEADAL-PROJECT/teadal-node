@@ -13,3 +13,4 @@ jwks_preferred_urls := {
 }
 
 jwt_user_field_name := "email"
+jwt_role_field_name := "role"

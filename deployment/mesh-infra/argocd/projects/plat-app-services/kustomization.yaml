@@ -6,5 +6,6 @@ resources:
 - httpbin
 # - catalogue
 - dspn-webeditor
+- opa-policy-manager
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
