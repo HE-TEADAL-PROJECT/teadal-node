@@ -36,7 +36,7 @@ spec:
           - containerPort: 8080
           env: 
           - name: MINIO_SERVER
-            value: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"          
+            value: "minio.minio-operator.svc.cluster.local"          
           - name: MINIO_ACCESS_KEY
             valueFrom:
               secretKeyRef:
