@@ -6,6 +6,6 @@ resources:
 - httpbin
 # - catalogue
 - dspn-webeditor
-- ollama
+# - ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
