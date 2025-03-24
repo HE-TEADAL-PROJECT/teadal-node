@@ -11,7 +11,7 @@ Once the roles have been defined, follow these steps:
 
 2) Select the "teadal" realm
 
-![Select realm](../images/select-realm.png)
+<img src="../images/select-realm.png" alt="Select realm" width="50%"/>
 
 3) Select "Clients" and from the list appearing on the right "admin-cli"
 
@@ -29,7 +29,7 @@ Once the roles have been defined, follow these steps:
 
 7) To add the roles, click on "Assign roles"
 
-![Select client scope](../images/select-assignrole.png)
+<img src="../images/select-assignrole.png" alt="Select client scope" width="50%"/>
 
 8) Select all the roles you want to expose and click on "Assign"
 
