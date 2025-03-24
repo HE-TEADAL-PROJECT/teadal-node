@@ -7,5 +7,6 @@ resources:
 # - catalogue
 - dspn-webeditor
 - opa-policy-manager
+# - ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
