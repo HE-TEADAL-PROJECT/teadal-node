@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: opa-policy-manager
-          image: registry.teadal.ubiwhere.com/teadal-public-images/opa-policy-manager
+          image: registry.teadal.ubiwhere.com/teadal-public-images/opa-policy-manager:0.0.1
           ports:
           - containerPort: 8080
           env: 
