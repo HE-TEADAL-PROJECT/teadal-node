@@ -6,9 +6,3 @@ resources:
 - opa/
 - reloader/
 
-# NOTE
-# ----
-# 1. Secrets. Don't include the `secrets` dir here. We install K8s
-# secrets manually for now, after entering the actual passwords in
-# `secrets/*.yaml`. We can automate this going forward, with e.g.
-# SealedSecrets or Vault, but for now we'll keep it simple.
