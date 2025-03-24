@@ -38,6 +38,8 @@ spec:
         - "/catalogue/*"
         - "/dspn-webeditor"
         - "/dspn-webeditor/*"
+        - "/opa-policy-manager"
+        - "/opa-policy-manager/*"   
         - "/ollama"
         - "/ollama/*"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok"

@@ -12,5 +12,7 @@ import data.authnz.rbac as rbac
 allow(rbac_db, config) := user {
     payload := oidc.claims(http_request, config)
     user := payload[config.jwt_user_field_name]
-    rbac.check(rbac_db, user, http_request)
+    rbac.user_check(rbac_db, user, http_request)
+    #role := payload[config.jwt_role_field_name]
+    #rbac.role_check(rbac_db, user, http_request)
 }
