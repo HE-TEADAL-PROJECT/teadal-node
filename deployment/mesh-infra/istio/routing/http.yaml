@@ -115,7 +115,7 @@ spec:
     - destination:
         host: dspn-diagrameditor.default.svc.cluster.local
         port:
-          number: 3000
+          number: 5173
   - match:
     - uri:
         prefix: /ollama/
