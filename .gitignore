@@ -6,3 +6,4 @@ nix/argocd.1
 nix/index.html
 
 .DS_Store
+tmp
