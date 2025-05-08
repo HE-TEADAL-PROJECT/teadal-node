@@ -9,7 +9,7 @@ resources:
 - catalogue/
 - dspn-diagrameditor
 - opa-policy-manager
-- redis
+# - redis
 # - ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
