@@ -145,7 +145,7 @@ resources:
 
 #### Prometheus with Thanos
 
-Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/kustomization.yaml) has both the lines ``- prometheus`` and ``- thanos`` uncommented. E.g.:
+Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/istio/kustomization.yaml) has both the lines ``- prometheus`` and ``- thanos`` uncommented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
