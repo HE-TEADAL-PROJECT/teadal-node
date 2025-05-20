@@ -8,4 +8,5 @@ resources:
 - prometheus/
 - thanos/
 - routing/
+- AI_api/
 #- skywalking/
