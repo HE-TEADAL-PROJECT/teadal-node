@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
 - keycloak.yaml
 - postgres.yaml
-# - ollama.yaml
+- ollama.yaml

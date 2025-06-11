@@ -8,6 +8,6 @@ resources:
 - dspn-diagrameditor
 - opa-policy-manager
 # - redis/app.yaml
-# - ollama
+- ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy

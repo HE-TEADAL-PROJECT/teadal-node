@@ -10,7 +10,7 @@ resources:
 - dspn-diagrameditor
 - opa-policy-manager
 # - redis
-# - ollama
+- ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
  
