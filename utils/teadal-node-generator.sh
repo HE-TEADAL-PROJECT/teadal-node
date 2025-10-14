@@ -16,6 +16,7 @@ main() {
     parse_options "$@"
     log "Script started with options:\n\trepo_dir=$repo_dir\n\trepo_url=$repo_url\n\tbranch=$branch"
     setup_microk8s
+    setup_mesh
     # exit 0 # TODO: comment before commit until fully tested
 }
 
@@ -73,46 +74,55 @@ setup_microk8s() {
     sudo usermod -a -G microk8s $USER
     mkdir -p ~/.kube
     chmod 0700 ~/.kube
+    # Setup apiserver port range (1-65535)
+    configure_apiserver_port
     # Setup addons
     log "Waiting for microk8s to be ready..."
     sudo microk8s status --wait-ready &>/dev/null || error "microk8s is not ready."
     log "Enabling microk8s addons (it may take a while)..."
     sudo microk8s enable dns &>/dev/null || error "Failed to enable dns."
     sudo microk8s disable ha-cluster --force &>/dev/null || error "Failed to disable ha-cluster."
+    # Storage using hostpath storage class
+    sudo microk8s enable hostpath-storage &>/dev/null || error "Failed to enable hostpath-storage."
     sudo microk8s config >~/.kube/config
     export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
+    alias kubectl='microk8s kubectl'
     log "Waiting for microk8s to be ready after enabling addons..."
     sudo microk8s status --wait-ready
     log "microk8s is ready."
 }
 
+configure_apiserver_port() {
+    local file="/var/snap/microk8s/current/args/kube-apiserver"
+    local param="--service-node-port-range"
+    local range="1-65535"
+
+    log "Configuring microk8s apiserver port range to $range..."
+    if [ ! -f "$file" ]; then
+        error "File '$file' does not exist."
+        exit 1
+    fi
+
+    sudo cp "$file" "$file.bak.$(date +%s)"
+
+    if sudo grep -q "^$param" "$file"; then
+        sudo sed -i "s|^$param.*|$param=$range|" "$file"
+    else
+        echo "$param=$range" | sudo tee -a "$file" >/dev/null
+    fi
+
+    microk8s stop
+    microk8s start
+}
+
+setup_mesh() {
+    log "Setting up mesh infra..."
+
+    istioctl install -y --verify -f "$repo_dir"/deployment/mesh-infra/istio/profile.yaml
+    kubectl label namespace default istio-injection=enabled
+}
+
 main "$@"
-
-# change the kube-apiserver ports
-file="/var/snap/microk8s/current/args/kube-apiserver"
-substring="\-\-service-node-port-range"
-replacement="--service-node-port-range=1-65535"
-
-# Check if the file exists
-if [ ! -f "$file" ]; then
-    echo "Error: File '$file' does not exist."
-    exit 1
-fi
-
-# Check if the file contains a line with the given substring
-if grep -q "$substring" "$file"; then
-    sed -i.bak "s/^$substring.*/$replacement/" "$file" && rm "$file".bak
-else
-    echo "$replacement" >>"$file"
-fi
-
-microk8s stop
-microk8s start
-
-export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
-microk8s config >~/.kube/config
-kubectl get pod -A
-echo "### microk8s configured ###"
 
 echo "setting up microk8s storage"
 
