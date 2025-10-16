@@ -31,6 +31,10 @@ logfile="$TEADAL_LOG_DIR/install-teadal.log"
 
 log() { echo "${GREEN}[INFO]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a $logfile; }
 error() { echo "${RED}[ERROR]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a $logfile >&2; }
+error_exit() {
+    error "$1"
+    exit "${2:-1}"
+}
 
 # Global variables
 repo_dir="$(pwd)" # Directory with the repo clone
@@ -65,54 +69,33 @@ parse_options() {
 setup_microk8s() {
     log "Setting up microk8s..."
 
+    # Copy configuration files
+    log "Copying microk8s configuration files..."
+    sudo mkdir -p /var/snap/microk8s/common/ || error_exit "Failed to create /var/snap/microk8s/common/."
+    sudo cp "$repo_dir/utils/microk8s-config.yaml" /var/snap/microk8s/common/.microk8s.yaml || error_exit "Failed to copy 99-microk8s.conf."
+
     # If microk8s is not installed install it
     if ! command -v microk8s &>/dev/null; then
-        sudo snap install microk8s --classic --channel=1.27/stable || error "Failed to install microk8s."
+        sudo snap install microk8s --classic --channel=1.27/stable || error_exit "Failed to install microk8s."
+    else
+        sudo microk8s stop
+        sudo microk8s start
     fi
 
     # Setup permissions
     sudo usermod -a -G microk8s $USER
     mkdir -p ~/.kube
     chmod 0700 ~/.kube
-    # Setup apiserver port range (1-65535)
-    configure_apiserver_port
-    # Setup addons
+    log "User $USER added to microk8s group. You may need to log out and log back in for this to take effect."
     log "Waiting for microk8s to be ready..."
-    sudo microk8s status --wait-ready &>/dev/null || error "microk8s is not ready."
-    log "Enabling microk8s addons (it may take a while)..."
-    sudo microk8s enable dns &>/dev/null || error "Failed to enable dns."
-    sudo microk8s disable ha-cluster --force &>/dev/null || error "Failed to disable ha-cluster."
-    # Storage using hostpath storage class
-    sudo microk8s enable hostpath-storage &>/dev/null || error "Failed to enable hostpath-storage."
+    sudo microk8s status --wait-ready &>/dev/null || error_exit "microk8s is not ready."
     sudo microk8s config >~/.kube/config
     export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
-    alias kubectl='microk8s kubectl'
-    log "Waiting for microk8s to be ready after enabling addons..."
-    sudo microk8s status --wait-ready
-    log "microk8s is ready."
-}
-
-configure_apiserver_port() {
-    local file="/var/snap/microk8s/current/args/kube-apiserver"
-    local param="--service-node-port-range"
-    local range="1-65535"
-
-    log "Configuring microk8s apiserver port range to $range..."
-    if [ ! -f "$file" ]; then
-        error "File '$file' does not exist."
-        exit 1
+    if ! command -v kubectl &>/dev/null; then
+        log "kubectl not found, aliasing it to microk8s.kubectl"
+        sudo snap alias microk8s.kubectl kubectl || error_exit "Failed to alias kubectl."
     fi
-
-    sudo cp "$file" "$file.bak.$(date +%s)"
-
-    if sudo grep -q "^$param" "$file"; then
-        sudo sed -i "s|^$param.*|$param=$range|" "$file"
-    else
-        echo "$param=$range" | sudo tee -a "$file" >/dev/null
-    fi
-
-    microk8s stop
-    microk8s start
+    log "Setup microk8s completed."
 }
 
 setup_mesh() {
@@ -194,7 +177,7 @@ else
     echo "Error the repoURL field does not exist"
 fi
 
-if [ -z "$branch"]; then
+if [ -z "$branch" ]; then
     # change the kustomizefile for argocd repo
     file="$repo_dir""/deployment/mesh-infra/argocd/projects/base/app.yaml"
     substring="targetRevision"
