@@ -69,17 +69,15 @@ parse_options() {
 setup_microk8s() {
     log "Setting up microk8s..."
 
-    # Copy configuration files
-    log "Copying microk8s configuration files..."
-    sudo mkdir -p /var/snap/microk8s/common/ || error_exit "Failed to create /var/snap/microk8s/common/."
-    sudo cp "$repo_dir/utils/microk8s-config.yaml" /var/snap/microk8s/common/.microk8s.yaml || error_exit "Failed to copy 99-microk8s.conf."
-
     # If microk8s is not installed install it
     if ! command -v microk8s &>/dev/null; then
+        log "microk8s not found, installing..."
+        sudo mkdir -p /var/snap/microk8s/common/ || error_exit "Failed to create /var/snap/microk8s/common/."
+        sudo cp "$repo_dir/utils/microk8s-config.yaml" /var/snap/microk8s/common/.microk8s.yaml || error_exit "Failed to copy microk8s configuration file."
         sudo snap install microk8s --classic --channel=1.27/stable || error_exit "Failed to install microk8s."
     else
-        sudo microk8s stop
-        sudo microk8s start
+        log "microk8s found, updating configuration..."
+        sudo snap set microk8s config="$(cat microk8s-config.yaml)"
     fi
 
     # Setup permissions
