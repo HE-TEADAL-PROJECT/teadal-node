@@ -16,8 +16,9 @@ main() {
     parse_options "$@"
     log "Script started with options:\n\trepo_dir=$repo_dir\n\trepo_url=$repo_url\n\tbranch=$branch"
     setup_microk8s
+    setup_storage
     setup_mesh
-    # exit 0 # TODO: comment before commit until fully tested
+    exit 0 # TODO: comment before commit until fully tested
 }
 
 ### Utilities scripts
@@ -77,7 +78,8 @@ setup_microk8s() {
         sudo snap install microk8s --classic --channel=1.27/stable || error_exit "Failed to install microk8s."
     else
         log "microk8s found, updating configuration..."
-        sudo snap set microk8s config="$(cat microk8s-config.yaml)"
+        microk8s start
+        sudo snap set microk8s config="$(cat $repo_dir/utils/microk8s-config.yaml)"
     fi
 
     # Setup permissions
@@ -100,15 +102,31 @@ setup_mesh() {
     log "Setting up mesh infra..."
 
     istioctl install -y --verify -f "$repo_dir"/deployment/mesh-infra/istio/profile.yaml
-    kubectl label namespace default istio-injection=enabled
+    kubectl label namespace default istio-injection=enabled || error_exit "Failed to label default namespace for istio injection."
+}
+
+setup_storage() {
+    log "Creating storage directories..."
+    sudo mkdir -p /mnt/data || error_exit "Failed to create /mnt/data directory."
+    sudo chmod 777 /mnt/data || error_exit "Failed to set permissions on /mnt/data."
+    sudo mkdir -p /mnt/data/d{1..10} || error_exit "Failed to create /mnt/data directories."
+
+    log "Setting up Persistent Volumes..."
+    pv_tool="$repo_dir/utils/create-local-pv.sh"
+    bash "$pv_tool" /mnt/data/d1 -s 20Gi -n local-pv-1 || error_exit "Failed to create Persistent Volume for d1."
+    for i in {2..10}; do
+        bash "$pv_tool" "/mnt/data/d$i" -s 10Gi -n "local-pv-$i" || error_exit "Failed to create Persistent Volume for d$i."
+    done
+
+    log "Local-static-provisioner storage setup completed."
 }
 
 main "$@"
 
 echo "setting up microk8s storage"
 
-sudo mkdir -p /mnt/data/d{1..10}
-sudo chmod -R 777 /mnt/data
+sudo mkdir -p /mnt/disk/d{1..10}
+sudo chmod -R 777 /mnt/disk
 node.config -microk8s pv 1:20 8:10
 hostname_dir=$(echo "$HOSTNAME" | tr '[:upper:]' '[:lower:]')
 echo "pippo"
@@ -144,6 +162,8 @@ kustomize build "$kustomizationfile_dir" | kubectl apply -f -
 kubectl get pv
 
 echo "microk8s storage set"
+
+exit 0
 
 echo "installing istio"
 
