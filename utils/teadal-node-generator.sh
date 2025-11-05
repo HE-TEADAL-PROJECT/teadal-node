@@ -18,6 +18,8 @@ main() {
     setup_microk8s
     setup_storage
     setup_mesh
+    setup_argocd
+    log "Script completed successfully."
     exit 0 # TODO: comment before commit until fully tested
 }
 
@@ -121,9 +123,24 @@ setup_storage() {
     log "Local-static-provisioner storage setup completed."
 }
 
+setup_argocd() {
+    argocd_dir="$repo_dir/deployment/mesh-infra/argocd"
+    log "Setting up ArgoCD from $argocd_dir..."
+
+    # First add the ArgoCD namespace
+    kubectl apply -f "$argocd_dir"/namespace.yaml >/dev/null || error_exit "Failed to create ArgoCD namespace."
+
+    # Create secrets
+    node.config -microk8s basicnode-secrets || error_exit "Failed to create ArgoCD secrets."
+
+    # Apply first and ignore errors
+    kubectl apply -k "$argocd_dir" >/dev/null || log "Initial ArgoCD apply encountered errors, proceeding..."
+    kubectl apply -k "$argocd_dir" >/dev/null || error_exit "Failed to apply ArgoCD configuration."
+}
+
 main "$@"
 
-echo "setting up microk8s storage"
+# echo "setting up microk8s storage"
 
 sudo mkdir -p /mnt/disk/d{1..10}
 sudo chmod -R 777 /mnt/disk
@@ -165,14 +182,14 @@ echo "microk8s storage set"
 
 exit 0
 
-echo "installing istio"
+# echo "installing istio"
 
-istioctl install -y --verify -f "$repo_dir"/deployment/mesh-infra/istio/profile.yaml
-kubectl label namespace default istio-injection=enabled
+# istioctl install -y --verify -f "$repo_dir"/deployment/mesh-infra/istio/profile.yaml
+# kubectl label namespace default istio-injection=enabled
 
-kubectl get pod -A
+# kubectl get pod -A
 
-echo "istio installed"
+# echo "istio installed"
 
 echo "installing ArgoCD"
 
