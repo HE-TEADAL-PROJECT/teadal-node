@@ -6,6 +6,7 @@ sysPkgs.writeShellApplication {
   runtimeInputs = [
     sysPkgs.kubectl
     sysPkgs.istioctl
+    sysPkgs.kustomize
   ];
 
   text = builtins.readFile ./teadal-deployment.sh;

@@ -137,8 +137,15 @@ setup_argocd() {
     nix run .#node-config -- -microk8s basicnode-secrets #|| error_exit "Failed to create ArgoCD secrets."
 
     # Apply first and ignore errors
-    kubectl apply -k "$argocd_dir" #>/dev/null || log "Initial ArgoCD apply encountered errors, proceeding..."
-    kubectl apply -k "$argocd_dir" #>/dev/null || error_exit "Failed to apply ArgoCD configuration."
+    #kubectl apply -k "$argocd_dir" #>/dev/null || log "Initial ArgoCD apply encountered errors, proceeding..."
+    #kubectl apply -k "$argocd_dir" #>/dev/null || error_exit "Failed to apply ArgoCD configuration."
+    
+    #kustomize build `echo "$repo_dir""/deployment/mesh-infra/argocd"` | kubectl apply -f -
+
+    #kustomize build `echo "$repo_dir""/deployment/mesh-infra/argocd"` | kubectl apply -f -
+    kustomize build "$repo_dir"/deployment/mesh-infra/argocd | kubectl apply -f -
+    
+    kustomize build "$repo_dir"/deployment/mesh-infra/argocd | kubectl apply -f -
 }
 
 main "$@"
