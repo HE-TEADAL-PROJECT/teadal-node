@@ -1,8 +1,8 @@
 version: 0.1.0
 addons:
   - name: dns
-  - name: ha-cluster
-    disable: true
+  #- name: ha-cluster
+  #  disable: true
   - name: hostpath-storage
     disable: true
 extraKubeAPIServerArgs:

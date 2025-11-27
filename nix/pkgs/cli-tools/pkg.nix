@@ -13,6 +13,7 @@
 
   kubectl-directpv, kubectl-minio, minio-client,
   opa-envoy-plugin,
+  teadal-deployment,
   node-config, pvlocalgen, go
 }:
 
@@ -54,12 +55,13 @@ rec {
     kustomize         # 5.0.3    (pkgs = nixos-23.05)
     kubernetes-helm   # 3.11.3   (pkgs = nixos-23.05)
     minio-client      # RELEASE.2023-05-04T18-10-16Z (pkgs = nixos-23.05)
-    open-policy-agent # 0.53.1   (pkgs = nixos-unstable on 01 Jul 2023)
-    opa-envoy-plugin  # 0.53.1   (pkgs = nixos-23.05)
+    open-policy-agent # 1.3.0    (pkgs = master on 19 Apr 2025)
+    opa-envoy-plugin  # 1.3.0    (pkgs = master on 19 Apr 2025)
     qemu              # 8.0.0    (pkgs = nixos-23.05)
     nixos-rebuild
     node-config
     pvlocalgen
+    teadal-deployment
     go                # 1.20.4   (pkgs = nixos-23.05)
   ] ++ node-cloud;
 
