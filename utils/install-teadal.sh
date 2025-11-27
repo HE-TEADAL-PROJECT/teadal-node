@@ -33,6 +33,7 @@ while getopts "d:u:b:h" opt; do
     esac
 done
 
+
 # Check mandatory arguments
 if [[ -z "$repo_url" ]]; then
     echo "Error: -r <repo> are required"
@@ -53,13 +54,15 @@ error() {
     exit 1
 }
 
+log "Running script with ${repo_url}, ${repo_dir}, ${repo_branch}"
+
 #clone the repo
 if [ ! -d "$repo_dir" ]; then
 
   if [[ "$repo_branch" == "HEAD" ]]; then
     git clone "$repo_url" "$repo_dir" ||  error "Problems in cloning the repo."
   else
-    git clone -b "$repo_branch" "repo_url" "$repo_dir" ||  error "Problems in cloning the repo."
+    git clone -b "$repo_branch" "$repo_url" "$repo_dir" ||  error "Problems in cloning the repo."
   fi
 else
   log "Directory ${repo_dir} already exists" 
