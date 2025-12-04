@@ -2,10 +2,10 @@
   buildGoApplication, gomod2nix
 }:
 buildGoApplication {                                          # NOTE (1)
-  pname = "node.config";
-  version = "0.1.7";
-  src = ./cmd;
-  pwd = ./cmd;
+  pname = "fdp-manager";
+  version = "0.1";
+  src = ./app;
+  pwd = ./app;
   modules = ./gomod2nix.toml;
   nativeBuildInputs = [ gomod2nix ];                          # NOTE (2)
   doCheck = false; # Testing this would require to build a kube cluter every time, lets not do this just to get the shell (we test before updating, pinky prommis!)
