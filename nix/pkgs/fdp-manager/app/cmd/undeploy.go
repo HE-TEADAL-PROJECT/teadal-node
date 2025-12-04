@@ -26,8 +26,7 @@ func runUndeploy(fdpName string) error {
 		return fmt.Errorf("deployment name cannot be empty")
 	}
 
-	//check if the fdp is deployed
-	fdpsDir := "projects/pilot-services/fdps"
+	fdpsDir := filepath.Join(Config.Paths.Node, Config.Paths.ArgoCD, "fdps")
 
 	// Check if fdps directory exists
 	if _, err := os.Stat(fdpsDir); os.IsNotExist(err) {
@@ -89,8 +88,7 @@ func runUndeploy(fdpName string) error {
 	fmt.Printf("Undeploying: %s\n", fdpName)
 
 	// remove the descriptor from fdps
-	targetDir := filepath.Join("projects", "pilot-services", "fdps")
-	targetPath := filepath.Join(targetDir, fdpName+".yaml")
+	targetPath := filepath.Join(fdpsDir, fdpName+".yaml")
 
 	if err := os.Remove(targetPath); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -100,21 +98,20 @@ func runUndeploy(fdpName string) error {
 	}
 
 	// remove the folder under projects/pilot-services
-	targetDir = filepath.Join("projects", "pilot-services")
-	targetPath = filepath.Join(targetDir, fdpName)
+	targetPath = filepath.Join(Config.Paths.Node, Config.Paths.ArgoCD, fdpName)
 	if err := os.RemoveAll(targetPath); err != nil {
 		return fmt.Errorf("removing folder %s: %w", targetPath, err)
 	}
 	fmt.Printf("Successfully removed resources for ArgoCD")
 
 	// update the kustomization file
+	targetDir := filepath.Join(Config.Paths.Node, Config.Paths.ArgoCD)
 	if err := removeFromKustomizationResources(targetDir, fdpName); err != nil {
 		return err
 	}
 
 	// remove the folder under deployment/pilot-services
-	targetDir = filepath.Join("deployment", "pilot-services")
-	targetPath = filepath.Join(targetDir, fdpName)
+	targetPath = filepath.Join(Config.Paths.Node, Config.Paths.MicroK8S, fdpName)
 	if err := os.RemoveAll(targetPath); err != nil {
 		return fmt.Errorf("removing folder %s: %w", targetPath, err)
 	}
