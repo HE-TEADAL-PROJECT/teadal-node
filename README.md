@@ -64,6 +64,13 @@ cd <download dir>/nix/pkgs/fdp-manager
 nix run .#fdp-manager deploy <descriptorfile>
 ```
 
+For testing, under the `example` folder there is the `fdp-sync-dummy` FDP that can be used.
+
+```bash
+nix run .#fdp-manager deploy ~/teadal.node/examples/fdp-sync-dummy/descriptor.yaml
+```
+Note! To make the deployment effective, the changes in the repository must be committed
+
 For additional information about the FDP-manager refer to the [related project](https://gitlab.teadal.ubiwhere.com/teadal-tech/fdp-manager)
 
 ### Detailed FDP deployment
