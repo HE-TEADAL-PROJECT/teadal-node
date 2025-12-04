@@ -65,3 +65,8 @@ nix run .#fdp-manager deploy <descriptorfile>
 ```
 
 For additional information about the FDP-manager refer to the [related project](https://gitlab.teadal.ubiwhere.com/teadal-tech/fdp-manager)
+
+### Detailed FDP deployment
+
+Additional information about the deployment is provided [here](docs/AddingPilot-FDP.md)
+
