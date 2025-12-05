@@ -32,6 +32,12 @@ where:
     - `<branch name>` the branch of the repo, (default: `HEAD`)
     - `<download dir>` directory where the repo is cloned (default: `./teadal.node`)  
 
+Once the installation has terminated, run the following command to set the required secrets
+
+```bash
+nix run .#node-config -- -microk8s basicnode-secrets
+```
+
 [*] We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
 ### Detailed installation procedure
