@@ -133,8 +133,8 @@ setup_argocd() {
     # First add the ArgoCD namespace
     kubectl apply -f "$argocd_dir"/namespace.yaml #>/dev/null || error_exit "Failed to create ArgoCD namespace."
 
-    # Create secrets
-    nix run .#node-config -- -microk8s basicnode-secrets #|| error_exit "Failed to create ArgoCD secrets."
+    # Create secrets - now disabled and left to the user to call
+    #nix run .#node-config -- -microk8s basicnode-secrets #|| error_exit "Failed to create ArgoCD secrets."
 
     # Apply first and ignore errors
     #kubectl apply -k "$argocd_dir" #>/dev/null || log "Initial ArgoCD apply encountered errors, proceeding..."
