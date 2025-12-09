@@ -30,16 +30,7 @@ Now, you need to clone the repo on the machine that will host the node
 ```bash
 git clone https://gitlab.teadal.ubiwhere.com/teadal-pilots/<name of pilot>/<name of pilot>.git
 ```
-
-In addition, you have to generate a deploy token from the GitLab repository. 
-
-If your repo is on GitLab, then go to the screen *Setting>Repository>Deploy tokens*. 
-
-![screenshot_deploytoken](./images/gitlab-deploy-token.png)
-
-Then *Expand>Add token* and insert a new token like the one in the following figure. Take note of the *username* (if you do not indicate a name, gitlab will generate it) and the *token* created.
-
-![screenshot_newdeploytoken](./images/gitlab-new-deploy-token.png)
+For that repo a deploy token has been obtained. If you need additional information on how to set a deploy token, refer to [this page](./DeployToken.md)
 
 ### Nix <a name="nix"/>
 
