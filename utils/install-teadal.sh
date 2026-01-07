@@ -117,6 +117,7 @@ else
     log "Starting teadal node generation in nix environment..."
     log "Ready to install TEADAL node"
     cd nix
+    nix shell
     nix run .#teadal-deployment || error "Failed to install Teadal node"
 
     log "TEADAL node installed"
